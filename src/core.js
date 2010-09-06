@@ -1904,35 +1904,56 @@ Strophe.Connection.prototype = {
      *  The handler should return true if it is to be invoked again;
      *  returning false will remove the handler after it returns.
      *
-     *  As a convenience, the ns parameters applies to the top level element
-     *  and also any of its immediate children.  This is primarily to make
-     *  matching /iq/query elements easy.
-     *
-     *  The options argument contains handler matching flags that affect how
-     *  matches are determined. Currently the only flag is matchBare (a
-     *  boolean). When matchBare is true, the from parameter and the from
-     *  attribute on the stanza will be matched as bare JIDs instead of
-     *  full JIDs. To use this, pass {matchBare: true} as the value of
-     *  options. The default value for matchBare is false. 
+     *  The options object is optional. Only define the attributes you want to
+     *  match.
+     *  
+     *  The available options are as follows:
+     *      (String) ns - The namespace to match. As a convenience, the ns 
+     *          parameter applies to the top level element and also any of 
+     *          its immediate children. This is primarily to make matching 
+     *          iq/query elements easy.
+     *      (String) name - The stanza name to match.
+     *      (String) type - The stanza type attribute to match.
+     *      (String) id - The stanza id attribute to match.
+     *      (String) from - The stanza from attribute to match.
+     *      (String) matchBare - When matchBare is true, the from parameter
+     *          and the from attribute on the stanza will be matched as bare
+     *          JIDs instead of full JIDs. The default value is false. 
      *
      *  The return value should be saved if you wish to remove the handler
      *  with deleteHandler().
      *
      *  Parameters:
      *    (Function) handler - The user callback.
-     *    (String) ns - The namespace to match.
-     *    (String) name - The stanza name to match.
-     *    (String) type - The stanza type attribute to match.
-     *    (String) id - The stanza id attribute to match.
-     *    (String) from - The stanza from attribute to match.
-     *    (String) options - The handler options
+     *    (Object) options - An optional object setting additional properties to match.
      *
      *  Returns:
      *    A reference to the handler that can be used to remove it.
      */
     addHandler: function (handler, ns, name, type, id, from, options)
     {
-        var hand = new Strophe.Handler(handler, ns, name, type, id, from, options);
+        var hand, opt;
+        
+        // if we only got 2 args and the second is an object, we're 
+        // using the options object to pass params.
+        // this is a bit ugly but lets us check for reverse support
+        if (arguments.length === 2 && typeof ns === 'object' && ns != null) {
+            opt = ns
+            
+            hand = new Strophe.Handler(
+                handler, 
+                opt.ns || null, 
+                opt.name || null, 
+                opt.type || null, 
+                opt.id || null, 
+                opt.from || null,
+                {matchBare: opt.matchBare || false}
+            );
+        } else {
+            // Otherwise we're using the old method of adding handlers.
+            hand = new Strophe.Handler(handler, ns, name, type, id, from, options);
+        }
+        
         this.addHandlers.push(hand);
         return hand;
     },
