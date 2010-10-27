@@ -127,11 +127,12 @@ Strophe.addConnectionPlugin('muc', {
     Parameters:
     (String) room - The multi-user chat room name.
     (String) nick - The nick name used in the chat room.
-    (String) message - The message to send to the room.
+    (String) message - The plaintext message to send to the room.
+    (String) html_message - The message to send to the room with html markup.
     Returns:
     msgiq - the unique id used to send the message
     */
-    message: function(room, nick, message) {
+    message: function(room, nick, message, html_message) {
         var room_nick = this.test_append_nick(room, nick);        
         var msgid = this._connection.getUniqueId();
         var msg = $msg({to: room_nick,
@@ -139,7 +140,13 @@ Strophe.addConnectionPlugin('muc', {
                         type: "groupchat",
                         id: msgid}).c("body",
                                       {xmlns: Strophe.NS.CLIENT}).t(message);
-        msg.up().c("x", {xmlns: "jabber:x:event"}).c("composing");
+        msg.up();
+        if(typeof html_message !== 'undefined')
+        {
+            msg.c("html", {xmlns: Strophe.NS.XHTML_IM}).c("body", {xmlns: Strophe.NS.XHTML}).h(html_message);
+            msg.up().up();
+        }
+        msg.c("x", {xmlns: "jabber:x:event"}).c("composing");
         this._connection.send(msg);
         return msgid;
     },
