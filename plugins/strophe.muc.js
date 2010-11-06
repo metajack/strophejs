@@ -144,11 +144,11 @@ Strophe.addConnectionPlugin('muc', {
         if(typeof html_message !== 'undefined')
         {
             msg.c("html", {xmlns: Strophe.NS.XHTML_IM}).c("body", {xmlns: Strophe.NS.XHTML}).h(html_message);
-
             if(msg.node.childNodes.length == 0) // html creation or import failed somewhere; fallback to plaintext
             {
+                parent = msg.node.parentNode;
                 msg.up().up();
-                this.node.removeChild(this.node.childNodes[1]); // get rid of the empty html element if we got invalid html so we don't send an empty message
+                msg.node.removeChild(parent); // get rid of the empty html element if we got invalid html so we don't send an empty message
             }
             else
             {
