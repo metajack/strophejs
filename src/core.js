@@ -962,9 +962,10 @@ Strophe = {
                if(elem.attributes[i].nodeName != "_realname") {
                  result += " " + elem.attributes[i].nodeName.toLowerCase() +
                 "='" + elem.attributes[i].value
-                    .replace("&", "&amp;")
-                       .replace("'", "&apos;")
-                       .replace("<", "&lt;") + "'";
+                    .replace(/&/g, "&amp;")
+                       .replace(/'/g, "&apos;")
+                       .replace(/</g, "&lt;")
+                       .replace(/>/g, "&gt;") + "'";
                }
         }
 
