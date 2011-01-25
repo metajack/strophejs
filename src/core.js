@@ -2159,7 +2159,6 @@ Strophe.Connection.prototype = {
             Strophe.debug("request id " + req.id +
                           "." + req.sends + " posting");
 
-            req.date = new Date();
             try {
                 req.xhr.open("POST", this.service, true);
             } catch (e2) {
@@ -2175,6 +2174,7 @@ Strophe.Connection.prototype = {
             // Fires the XHR request -- may be invoked immediately
             // or on a gradually expanding retry window for reconnects
             var sendFunc = function () {
+                req.date = new Date();
                 req.xhr.send(req.data);
             };
 
