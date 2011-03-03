@@ -788,7 +788,7 @@ Strophe = {
         result = "<" + nodeName;
         for (i = 0; i < elem.attributes.length; i++) {
                if(elem.attributes[i].nodeName != "_realname") {
-                 result += " " + elem.attributes[i].nodeName.toLowerCase() +
+                 result += " " + elem.attributes[i].nodeName +
                 "='" + elem.attributes[i].value
                     .replace(/&/g, "&amp;")
                        .replace(/\'/g, "&apos;")
