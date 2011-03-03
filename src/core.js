@@ -260,10 +260,12 @@ Strophe = {
      *
      *  ElementType.NORMAL - Normal element.
      *  ElementType.TEXT - Text data element.
+     *  ElementType.CDATA - CDATA element.
      */
     ElementType: {
         NORMAL: 1,
-        TEXT: 3
+        TEXT: 3,
+        CDATA: 4
     },
 
     /** PrivateConstants: Timeout Values
@@ -503,13 +505,16 @@ Strophe = {
         if (!elem) { return null; }
 
         var str = "";
-        if (elem.childNodes.length === 0 && elem.nodeType ==
-            Strophe.ElementType.TEXT) {
+        if (elem.childNodes.length === 0 &&
+            (elem.nodeType == Strophe.ElementType.TEXT ||
+             elem.nodeType == Strophe.ElementType.CDATA)) {
             str += elem.nodeValue;
         }
 
         for (var i = 0; i < elem.childNodes.length; i++) {
-            if (elem.childNodes[i].nodeType == Strophe.ElementType.TEXT) {
+            var el = elem.childNodes[i];
+            if (el.nodeType == Strophe.ElementType.TEXT ||
+                el.nodeType == Strophe.ElementType.CDATA) {
                 str += elem.childNodes[i].nodeValue;
             }
         }
@@ -543,7 +548,8 @@ Strophe = {
             for (i = 0; i < elem.childNodes.length; i++) {
                 el.appendChild(Strophe.copyElement(elem.childNodes[i]));
             }
-        } else if (elem.nodeType == Strophe.ElementType.TEXT) {
+        } else if (elem.nodeType == Strophe.ElementType.TEXT ||
+                   elem.nodeType == Strophe.ElementType.CDATA) {
             el = Strophe.xmlTextNode(elem.nodeValue);
         }
 
@@ -800,6 +806,9 @@ Strophe = {
                 } else if (child.nodeType == Strophe.ElementType.TEXT) {
                     // text element
                     result += child.nodeValue;
+                } else if (child.nodeType == Strophe.ElementType.CDATA) {
+                    // cdata element
+                    result += "<![CDATA[" + child.nodeValue + "]]>";
                 }
             }
             result += "</" + nodeName + ">";
