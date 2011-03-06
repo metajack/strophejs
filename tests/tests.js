@@ -123,6 +123,18 @@ $(document).ready(function () {
         equals(elem.tagName, "message", "Element name should be the same");
     });
 
+    test("detect importNode properly", function() {
+      var elem = Strophe.xmlElement("test"),
+      builder = new Strophe.Builder("test");
+      try {
+        builder.cnode(elem);
+      } catch(e) {
+        ok(false, "should not throw exception");
+        return;
+      }
+      ok(true, "should run without exception");
+    });
+
     module("Handler");
 
     test("Full JID matching", function () {
