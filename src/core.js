@@ -2600,21 +2600,32 @@ Strophe.Connection.prototype = {
         var do_sasl_plain = false;
         var do_sasl_digest_md5 = false;
         var do_sasl_anonymous = false;
+        var do_legacy_auth = false;
 
+        // Check for the stream:features tag
+        var hasFeatures = bodyWrap.getElementsByTagName("stream:features").length > 0;
+        if (!hasFeatures) {
+            hasFeatures = bodyWrap.getElementsByTagName("features").length > 0;
+        }
         var mechanisms = bodyWrap.getElementsByTagName("mechanism");
         var i, mech, auth_str, hashed_auth_str;
-        if (mechanisms.length > 0) {
-            for (i = 0; i < mechanisms.length; i++) {
-                mech = Strophe.getText(mechanisms[i]);
-                if (mech == 'DIGEST-MD5') {
-                    do_sasl_digest_md5 = true;
-                } else if (mech == 'PLAIN') {
-                    do_sasl_plain = true;
-                } else if (mech == 'ANONYMOUS') {
-                    do_sasl_anonymous = true;
+        if (hasFeatures) {
+            if (mechanisms.length > 0) {
+                for (i = 0; i < mechanisms.length; i++) {
+                    mech = Strophe.getText(mechanisms[i]);
+                    if (mech == 'DIGEST-MD5') {
+                        do_sasl_digest_md5 = true;
+                    } else if (mech == 'PLAIN') {
+                        do_sasl_plain = true;
+                    } else if (mech == 'ANONYMOUS') {
+                        do_sasl_anonymous = true;
+                    }
                 }
             }
-        } else {
+            do_legacy_auth = bodyWrap.getElementsByTagName("auth").length > 0;
+        }
+
+        if (!do_sasl_plain && !do_sasl_digest_md5 && !do_sasl_anonymous && !do_legacy_auth) {
             // we didn't get stream:features yet, so we need wait for it
             // by sending a blank poll request
             var body = this._buildBody();
