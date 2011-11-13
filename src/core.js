@@ -1412,6 +1412,8 @@ Strophe.Connection = function (service)
     this.service = service;
     /* The connected JID. */
     this.jid = "";
+    /* the JIDs domain */
+    this.domain = null;
     /* request id for body tags */
     this.rid = Math.floor(Math.random() * 4294967295);
     /* The current session ID. */
@@ -1432,9 +1434,11 @@ Strophe.Connection = function (service)
     this.addTimeds = [];
     this.addHandlers = [];
 
+    this._authentication = {};
     this._idleTimeout = null;
     this._disconnectTimeout = null;
 
+    this.do_authentication = true;
     this.authenticated = false;
     this.disconnecting = false;
     this.connected = false;
@@ -1497,6 +1501,7 @@ Strophe.Connection.prototype = {
         this.removeHandlers = [];
         this.addTimeds = [];
         this.addHandlers = [];
+        this._authentication = {};
 
         this.authenticated = false;
         this.disconnecting = false;
@@ -1604,7 +1609,7 @@ Strophe.Connection.prototype = {
         this.hold = hold || this.hold;
 
         // parse jid for domain and resource
-        this.domain = Strophe.getDomainFromJid(this.jid);
+        this.domain = this.domain || Strophe.getDomainFromJid(this.jid);
 
         // build the body tag
         var body = this._buildBody().attrs({
@@ -1620,10 +1625,13 @@ Strophe.Connection.prototype = {
 
         this._changeConnectStatus(Strophe.Status.CONNECTING, null);
 
+        var _connect_cb = this._connect_callback || this._connect_cb;
+        this._connect_callback = null;
+
         this._requests.push(
             new Strophe.Request(body.tree(),
                                 this._onRequestStateChange.bind(
-                                    this, this._connect_cb.bind(this)),
+                                    this, _connect_cb.bind(this)),
                                 body.tree().getAttribute("rid")));
         this._throttledRequestHandler();
     },
@@ -2548,8 +2556,11 @@ Strophe.Connection.prototype = {
      *
      *  Parameters:
      *    (Strophe.Request) req - The current request.
+     *    (Function) _callback - low level (xmpp) connect callback function.
+     *      Useful for plugins with their own xmpp connect callback (when their)
+     *      want to do something special).
      */
-    _connect_cb: function (req)
+    _connect_cb: function (req, _callback)
     {
         Strophe.info("_connect_cb was called");
 
@@ -2596,10 +2607,10 @@ Strophe.Connection.prototype = {
         var wait = bodyWrap.getAttribute('wait');
         if (wait) { this.wait = parseInt(wait, 10); }
 
-
-        var do_sasl_plain = false;
-        var do_sasl_digest_md5 = false;
-        var do_sasl_anonymous = false;
+//
+        this._authentication.sasl_plain = false;
+        this._authentication.sasl_digest_md5 = false;
+        this._authentication.sasl_anonymous = false;
 
         var mechanisms = bodyWrap.getElementsByTagName("mechanism");
         var i, mech, auth_str, hashed_auth_str;
@@ -2607,28 +2618,44 @@ Strophe.Connection.prototype = {
             for (i = 0; i < mechanisms.length; i++) {
                 mech = Strophe.getText(mechanisms[i]);
                 if (mech == 'DIGEST-MD5') {
-                    do_sasl_digest_md5 = true;
+                    this._authentication.sasl_digest_md5 = true;
                 } else if (mech == 'PLAIN') {
-                    do_sasl_plain = true;
+                    this._authentication.sasl_plain = true;
                 } else if (mech == 'ANONYMOUS') {
-                    do_sasl_anonymous = true;
+                    this._authentication.sasl_anonymous = true;
                 }
             }
         } else {
+            _callback = _callback || this._connect_cb;
             // we didn't get stream:features yet, so we need wait for it
             // by sending a blank poll request
             var body = this._buildBody();
             this._requests.push(
                 new Strophe.Request(body.tree(),
                                     this._onRequestStateChange.bind(
-                                        this, this._connect_cb.bind(this)),
+                                        this, _callback.bind(this)),
                                     body.tree().getAttribute("rid")));
             this._throttledRequestHandler();
             return;
         }
+        if (this.do_authentication !== false)
+            this.authenticate();
+    },
 
+    /** Function: authenticate
+     * Set up authentication
+     *
+     *  Contiunues the initial connection request by setting up authentication
+     *  handlers and start the authentication process.
+     *
+     *  SASL authentication will be attempted if available, otherwise
+     *  the code will fall back to legacy authentication.
+     *
+     */
+    authenticate: function ()
+    {
         if (Strophe.getNodeFromJid(this.jid) === null &&
-            do_sasl_anonymous) {
+            this._authentication.sasl_anonymous) {
             this._changeConnectStatus(Strophe.Status.AUTHENTICATING, null);
             this._sasl_success_handler = this._addSysHandler(
                 this._sasl_success_cb.bind(this), null,
@@ -2647,7 +2674,7 @@ Strophe.Connection.prototype = {
             this._changeConnectStatus(Strophe.Status.CONNFAIL,
                                       'x-strophe-bad-non-anon-jid');
             this.disconnect();
-        } else if (do_sasl_digest_md5) {
+        } else if (this._authentication.sasl_digest_md5) {
             this._changeConnectStatus(Strophe.Status.AUTHENTICATING, null);
             this._sasl_challenge_handler = this._addSysHandler(
                 this._sasl_challenge1_cb.bind(this), null,
@@ -2660,7 +2687,7 @@ Strophe.Connection.prototype = {
                 xmlns: Strophe.NS.SASL,
                 mechanism: "DIGEST-MD5"
             }).tree());
-        } else if (do_sasl_plain) {
+        } else if (this._authentication.sasl_plain) {
             // Build the plain auth string (barejid null
             // username null password) and base 64 encoded.
             auth_str = Strophe.getBareJidFromJid(this.jid);
