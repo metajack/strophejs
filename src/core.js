@@ -2018,6 +2018,7 @@ Strophe.Connection.prototype = {
 	    id = this.getUniqueId("sendIQ");
 	    elem.setAttribute("id", id);
 	}
+	var sentType = elem.getAttribute('type');
 	if(sentType != 'error' && sentType != 'result') {
 		var handler = this.addHandler(function (stanza) {
 		    // remove timeout handler if there is one
