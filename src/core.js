@@ -946,12 +946,16 @@ Strophe = {
         result = "<" + nodeName;
         for (i = 0; i < elem.attributes.length; i++) {
                if(elem.attributes[i].nodeName != "_realname") {
-                 result += " " + elem.attributes[i].nodeName.toLowerCase() +
-                "='" + elem.attributes[i].value
-                    .replace(/&/g, "&amp;")
-                       .replace(/\'/g, "&apos;")
-                       .replace(/>/g, "&gt;")
-                       .replace(/</g, "&lt;") + "'";
+                 result += " " + elem.attributes[i].nodeName.toLowerCase() + "=";
+                 var escaped = elem.attributes[i].value
+                       .replace(/\&/g, "&amp;")
+                         .replace(/</g,  "&lt;")
+                           .replace(/>/g,  "&gt;");
+                 if (escaped.indexOf('"') > -1) {
+                   result += "'" + escaped.replace(/\'/g, "&apos;") + "'";
+                 } else {
+                   result += '"' + escaped.replace(/\"/g, "&quot;") + '"';
+                 }
                }
         }
 
