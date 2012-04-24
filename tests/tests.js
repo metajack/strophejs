@@ -125,7 +125,7 @@ $(document).ready(function () {
         equal(Strophe.getText(textNode0), "s &lt; &amp; &gt; p", "should be escaped");
         var text1 = "s's or \"p\"";
         var textNode1 = Strophe.xmlTextNode(text1);
-        equal(Strophe.getText(textNode1), "s&apos;s or &quot;p&quot;", "should be escaped");
+        equal(Strophe.getText(textNode1), "s's or \"p\"", "should be unchanged");
         var text2 = "<![CDATA[<foo>]]>";
         var textNode2 = Strophe.xmlTextNode(text2);
         equal(Strophe.getText(textNode2), "&lt;![CDATA[&lt;foo&gt;]]&gt;", "should be escaped");
@@ -157,7 +157,7 @@ $(document).ready(function () {
         equal(Strophe.serialize(element2), "<foo attr1='abc' attr2='edf'>bar</foo>", "should be serialized");
         // Escaping values
         var element3 = parser.parseFromString("<foo>a &gt; &apos;b&apos; &amp; &quot;b&quot; &lt; c</foo>","text/xml").documentElement;
-        equal(Strophe.serialize(element3), "<foo>a &gt; &apos;b&apos; &amp; &quot;b&quot; &lt; c</foo>", "should be serialized");
+        equal(Strophe.serialize(element3), "<foo>a &gt; 'b' &amp; \"b\" &lt; c</foo>", "should be serialized");
         // Escaping attributes
         var element4 = parser.parseFromString("<foo attr='&lt;a> &apos;b&apos;'>bar</foo>","text/xml").documentElement;
         equal(Strophe.serialize(element4), "<foo attr='&lt;a&gt; &apos;b&apos;'>bar</foo>", "should be serialized");
