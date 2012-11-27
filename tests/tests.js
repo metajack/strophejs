@@ -305,4 +305,18 @@ $(document).ready(function () {
         equal(typeof window.$iq, 'function');
         equal(typeof window.$pres, 'function');
     });
+    
+    test("SHA1", 10, function()
+    {
+       equal(typeof window.SHA1, 'object');
+       equal(typeof window.SHA1.hex_sha1, 'function');
+       equal(typeof window.SHA1.b64_sha1, 'function');
+       equal(typeof window.SHA1.str_sha1, 'function');
+       equal(typeof window.SHA1.hex_hmac_sha1, 'function');
+       equal(typeof window.SHA1.b64_hmac_sha1, 'function');
+       equal(typeof window.SHA1.str_hmac_sha1, 'function');
+       equal(typeof window.SHA1.sha1_vm_test, 'function');
+       equal(typeof window.SHA1.core_hmac_sha1, 'function');
+       equal(typeof window.SHA1.binb2str, 'function');
+    });
 });
