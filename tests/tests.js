@@ -282,4 +282,13 @@ $(document).ready(function () {
         equal(conn._requests.length, 1, "_requests should be same length");
         equal(spy.called, false, "callback should not be called");
     });
+    
+    module("Browser globals");
+    
+    test("Base64", 3, function()
+    {
+       equal(typeof window.Base64, 'object');
+       equal(typeof window.Base64.decode, 'function');
+       equal(typeof window.Base64.encode, 'function');
+    });
 });
