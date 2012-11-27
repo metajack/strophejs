@@ -291,4 +291,18 @@ $(document).ready(function () {
        equal(typeof window.Base64.decode, 'function');
        equal(typeof window.Base64.encode, 'function');
     });
+    
+    test("MD5", 1, function()
+    {
+        equal(typeof window.MD5, 'object');
+    });
+    
+    test("Core", 5, function()
+    {
+        equal(typeof window.Strophe, 'object');
+        equal(typeof window.$build, 'function');
+        equal(typeof window.$msg, 'function');
+        equal(typeof window.$iq, 'function');
+        equal(typeof window.$pres, 'function');
+    });
 });
