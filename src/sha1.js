@@ -7,7 +7,15 @@
  * See http://pajhome.org.uk/crypt/md5 for details.
  */
 
-var SHA1 = (function () {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define([''], factory);
+    } else {
+        // Browser globals
+        root.SHA1 = factory();
+    }
+}(this, function () {
 
     /*
      * Configurable variables. You may need to tweak these to be compatible with
@@ -235,4 +243,4 @@ var SHA1 = (function () {
     }
 
     return obj;
-})();
+}));
