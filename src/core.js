@@ -110,6 +110,10 @@ if (!Array.prototype.indexOf)
     }
 }(this, function (Base64, MD5, SHA1) {
 var Strophe;
+var $build = function (name, attrs) { return new Strophe.Builder(name, attrs); };
+var $pres = function (attrs) { return new Strophe.Builder("presence", attrs); }
+var $msg = function (attrs) { return new Strophe.Builder("message", attrs); };
+var $iq = function (attrs) { return new Strophe.Builder("iq", attrs); };
 
 /** Class: Strophe
  *  An object container for all Strophe library functions.
