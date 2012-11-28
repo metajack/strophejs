@@ -292,9 +292,16 @@ $(document).ready(function () {
        equal(typeof window.Base64.encode, 'function');
     });
     
-    test("MD5", 1, function()
+    test("MD5", 8, function()
     {
         equal(typeof window.MD5, 'object');
+        equal(typeof window.MD5.hexdigest, 'function');
+        equal(typeof window.MD5.b64digest, 'function');
+        equal(typeof window.MD5.hash, 'function');
+        equal(typeof window.MD5.hmac_hexdigest, 'function');
+        equal(typeof window.MD5.hmac_b64digest, 'function');
+        equal(typeof window.MD5.hmac_hash, 'function');
+        equal(typeof window.MD5.test, 'function');
     });
     
     test("Core", 5, function()
