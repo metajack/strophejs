@@ -1,9 +1,29 @@
+requirejs.config(
+{
+    paths: 
+	{
+        Base64: '../src/base64',
+        MD5: '../src/md5',
+        SHA1: '../src/sha1',
+        Strophe: '../src/core',
+        $build: '../src/build',
+        $iq: '../src/iq',
+        $msg: '../src/msg',
+        $pres: '../src/pres'
+    }
+});
+
 require([
-    '../src/base64', 
-    '../src/md5', 
-    '../src/sha1'
-], 
-function(Base64, MD5, SHA1)
+    'Base64', 
+    'MD5', 
+    'SHA1',
+    'Strophe',
+    '$build',
+    '$iq',
+    '$msg',
+    '$pres'
+],
+function(Base64, MD5, SHA1, Strophe, $build, $iq, $msg, $pres)
 {
     test("Base64", 3, function()
     {
@@ -36,5 +56,14 @@ function(Base64, MD5, SHA1)
        equal(typeof SHA1.sha1_vm_test, 'function');
        equal(typeof SHA1.core_hmac_sha1, 'function');
        equal(typeof SHA1.binb2str, 'function');
+    });
+    
+    test("Core", 5, function()
+    {
+        equal(typeof Strophe, 'object');
+        equal(typeof $build, 'function');
+        equal(typeof $msg, 'function');
+        equal(typeof $iq, 'function');
+        equal(typeof $pres, 'function');
     });
 });

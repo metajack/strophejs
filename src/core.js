@@ -100,51 +100,16 @@ if (!Array.prototype.indexOf)
  * that are still executing.
  */
 
-(function (callback) {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['Base64', 'MD5', 'SHA1'], factory);
+    } else {
+        // Browser globals
+        root.Strophe = factory(root.Base64, root.MD5, root.SHA1);
+    }
+}(this, function (Base64, MD5, SHA1) {
 var Strophe;
-
-/** Function: $build
- *  Create a Strophe.Builder.
- *  This is an alias for 'new Strophe.Builder(name, attrs)'.
- *
- *  Parameters:
- *    (String) name - The root element name.
- *    (Object) attrs - The attributes for the root element in object notation.
- *
- *  Returns:
- *    A new Strophe.Builder object.
- */
-function $build(name, attrs) { return new Strophe.Builder(name, attrs); }
-/** Function: $msg
- *  Create a Strophe.Builder with a <message/> element as the root.
- *
- *  Parmaeters:
- *    (Object) attrs - The <message/> element attributes in object notation.
- *
- *  Returns:
- *    A new Strophe.Builder object.
- */
-function $msg(attrs) { return new Strophe.Builder("message", attrs); }
-/** Function: $iq
- *  Create a Strophe.Builder with an <iq/> element as the root.
- *
- *  Parameters:
- *    (Object) attrs - The <iq/> element attributes in object notation.
- *
- *  Returns:
- *    A new Strophe.Builder object.
- */
-function $iq(attrs) { return new Strophe.Builder("iq", attrs); }
-/** Function: $pres
- *  Create a Strophe.Builder with a <presence/> element as the root.
- *
- *  Parameters:
- *    (Object) attrs - The <presence/> element attributes in object notation.
- *
- *  Returns:
- *    A new Strophe.Builder object.
- */
-function $pres(attrs) { return new Strophe.Builder("presence", attrs); }
 
 /** Class: Strophe
  *  An object container for all Strophe library functions.
@@ -3624,14 +3589,6 @@ Strophe.Connection.prototype = {
     }
 };
 
-if (callback) {
-    callback(Strophe, $build, $msg, $iq, $pres);
-}
+return Strophe;
+}));
 
-})(function () {
-    window.Strophe = arguments[0];
-    window.$build = arguments[1];
-    window.$msg = arguments[2];
-    window.$iq = arguments[3];
-    window.$pres = arguments[4];
-});
