@@ -2388,7 +2388,8 @@ Strophe.Connection.prototype = {
                           "." + req.sends + " posting");
 
             try {
-                req.xhr.open("POST", this.service, true);
+            	var async = (this.sync) ? false : true;
+                req.xhr.open("POST", this.service, async);
             } catch (e2) {
                 Strophe.error("XHR open failed.");
                 if (!this.connected) {
