@@ -9,7 +9,6 @@ Strophe.Authentication.PLAIN = function() {
  */
 Strophe.Authentication.PLAIN.prototype.init = function(connection) {
 	this._connection = connection;
-	this.matches = false;
 	this._data = {};
 	this._successHandler = null;
 	this._failureHandler = null;

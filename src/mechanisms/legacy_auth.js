@@ -9,7 +9,6 @@ Strophe.Authentication.LEGACY_AUTH = function() {
  */
 Strophe.Authentication.LEGACY_AUTH.prototype.init = function(connection) {
 	this._connection = connection;
-	this.matches = false;
 	this._data = {};
 	this._auth1Handler = null;
 };

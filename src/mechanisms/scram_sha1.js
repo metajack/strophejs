@@ -9,7 +9,6 @@ Strophe.Authentication.SCRAM_SHA1 = function() {
  */
 Strophe.Authentication.SCRAM_SHA1.prototype.init = function(connection) {
 	this._connection = connection;
-	this.matches = false;
 	this._data = {};
 	this._successHandler = null;
 	this._challengeHandler = null;

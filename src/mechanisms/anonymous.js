@@ -9,7 +9,6 @@ Strophe.Authentication.ANONYMOUS = function() {
  */
 Strophe.Authentication.ANONYMOUS.prototype.init = function(connection) {
 	this._connection = connection;
-	this.matches = false;
 	this._successHandler = null;
 	this._failureHandler = null;
 };
