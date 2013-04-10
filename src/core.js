@@ -196,7 +196,8 @@ Strophe = {
         VERSION: "jabber:iq:version",
         STANZAS: "urn:ietf:params:xml:ns:xmpp-stanzas",
         XHTML_IM: "http://jabber.org/protocol/xhtml-im",
-        XHTML: "http://www.w3.org/1999/xhtml"
+        XHTML: "http://www.w3.org/1999/xhtml",
+        RECEIPTS: "urn:xmpp:receipts"
     },
 
 
