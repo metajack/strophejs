@@ -7,7 +7,16 @@
  * See http://pajhome.org.uk/crypt/md5 for more info.
  */
 
-var MD5 = (function () {
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(factory);
+    } else {
+        // Browser globals
+        root.MD5 = factory();
+    }
+}(this, function () {
+
     /*
      * Configurable variables. You may need to tweak these to be compatible with
      * the server-side, but the defaults work in most cases.
@@ -234,7 +243,7 @@ var MD5 = (function () {
         return core_md5(opad.concat(hash), 512 + 128);
     };
 
-    var obj = {
+    return {
         /*
          * These are the functions you'll usually want to call.
          * They take string arguments and return either hex or base-64 encoded
@@ -271,6 +280,4 @@ var MD5 = (function () {
             return MD5.hexdigest("abc") === "900150983cd24fb0d6963f7d28e17f72";
         }
     };
-
-    return obj;
-})();
+}));

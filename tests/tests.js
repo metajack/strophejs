@@ -282,4 +282,48 @@ $(document).ready(function () {
         equal(conn._requests.length, 1, "_requests should be same length");
         equal(spy.called, false, "callback should not be called");
     });
+    
+    module("Browser globals");
+    
+    test("Base64", 3, function()
+    {
+       equal(typeof window.Base64, 'object');
+       equal(typeof window.Base64.decode, 'function');
+       equal(typeof window.Base64.encode, 'function');
+    });
+    
+    test("MD5", 8, function()
+    {
+        equal(typeof window.MD5, 'object');
+        equal(typeof window.MD5.hexdigest, 'function');
+        equal(typeof window.MD5.b64digest, 'function');
+        equal(typeof window.MD5.hash, 'function');
+        equal(typeof window.MD5.hmac_hexdigest, 'function');
+        equal(typeof window.MD5.hmac_b64digest, 'function');
+        equal(typeof window.MD5.hmac_hash, 'function');
+        equal(typeof window.MD5.test, 'function');
+    });
+    
+    test("Core", 5, function()
+    {
+        equal(typeof window.Strophe, 'object');
+        equal(typeof window.$build, 'function');
+        equal(typeof window.$msg, 'function');
+        equal(typeof window.$iq, 'function');
+        equal(typeof window.$pres, 'function');
+    });
+    
+    test("SHA1", 10, function()
+    {
+       equal(typeof window.SHA1, 'object');
+       equal(typeof window.SHA1.hex_sha1, 'function');
+       equal(typeof window.SHA1.b64_sha1, 'function');
+       equal(typeof window.SHA1.str_sha1, 'function');
+       equal(typeof window.SHA1.hex_hmac_sha1, 'function');
+       equal(typeof window.SHA1.b64_hmac_sha1, 'function');
+       equal(typeof window.SHA1.str_hmac_sha1, 'function');
+       equal(typeof window.SHA1.sha1_vm_test, 'function');
+       equal(typeof window.SHA1.core_hmac_sha1, 'function');
+       equal(typeof window.SHA1.binb2str, 'function');
+    });
 });
