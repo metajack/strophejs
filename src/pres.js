@@ -10,11 +10,14 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['Strophe'], factory);
+        define(['Strophe'], function(Strophe) {
+            // But also create global
+            return (root.$pres = factory(root.Strophe));
+        });
     } else {
         // Browser globals
         root.$pres = factory(root.Strophe);
     }
-}(this, function (Strophe) {    
-    return function (attrs) { return new Strophe.Builder("presence", attrs); }
+}(this, function (Strophe) {
+    return function (attrs) { return new Strophe.Builder("presence", attrs); };
 }));
