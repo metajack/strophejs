@@ -2514,7 +2514,7 @@ Strophe.Connection.prototype = {
             var reqIs0 = (this._requests[0] == req);
             var reqIs1 = (this._requests[1] == req);
 
-            if ((reqStatus > 0 && reqStatus < 500) || req.sends > 5) {
+            if ((reqStatus > 0 && reqStatus < 500) || req.sends > this.maxRetries) {
                 // remove from internal queue
                 this._removeRequest(req);
                 Strophe.debug("request id " +
@@ -2557,7 +2557,7 @@ Strophe.Connection.prototype = {
             }
 
             if (!((reqStatus > 0 && reqStatus < 500) ||
-                  req.sends > 5)) {
+                  req.sends > this.maxRetries)) {
                 this._throttledRequestHandler();
             }
         }
