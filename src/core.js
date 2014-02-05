@@ -2021,42 +2021,44 @@ Strophe.Connection.prototype = {
 	    id = this.getUniqueId("sendIQ");
 	    elem.setAttribute("id", id);
 	}
+	var sentType = elem.getAttribute('type');
+	if(sentType != 'error' && sentType != 'result') {
+		var handler = this.addHandler(function (stanza) {
+		    // remove timeout handler if there is one
+	            if (timeoutHandler) {
+	                that.deleteTimedHandler(timeoutHandler);
+	            }
+	
+	            var iqtype = stanza.getAttribute('type');
+		    if (iqtype == 'result') {
+			if (callback) {
+	                    callback(stanza);
+	                }
+		    } else if (iqtype == 'error') {
+			if (errback) {
+	                    errback(stanza);
+	                }
+		    } else {
+	                throw {
+	                    name: "StropheError",
+	                    message: "Got bad IQ type of " + iqtype
+	                };
+	            }
+		}, null, 'iq', null, id);
 
-	var handler = this.addHandler(function (stanza) {
-	    // remove timeout handler if there is one
-            if (timeoutHandler) {
-                that.deleteTimedHandler(timeoutHandler);
-            }
-
-            var iqtype = stanza.getAttribute('type');
-	    if (iqtype == 'result') {
-		if (callback) {
-                    callback(stanza);
-                }
-	    } else if (iqtype == 'error') {
-		if (errback) {
-                    errback(stanza);
-                }
-	    } else {
-                throw {
-                    name: "StropheError",
-                    message: "Got bad IQ type of " + iqtype
-                };
-            }
-	}, null, 'iq', null, id);
-
-	// if timeout specified, setup timeout handler.
-	if (timeout) {
-	    timeoutHandler = this.addTimedHandler(timeout, function () {
-                // get rid of normal handler
-                that.deleteHandler(handler);
-
-	        // call errback on timeout with null stanza
-                if (errback) {
-		    errback(null);
-                }
-		return false;
-	    });
+		// if timeout specified, setup timeout handler.
+		if (timeout) {
+		    timeoutHandler = this.addTimedHandler(timeout, function () {
+	                // get rid of normal handler
+	                that.deleteHandler(handler);
+	
+		        // call errback on timeout with null stanza
+	                if (errback) {
+			    errback(null);
+	                }
+			return false;
+		    });
+		}
 	}
 
 	this.send(elem);
