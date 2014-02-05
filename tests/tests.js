@@ -97,12 +97,12 @@ $(document).ready(function () {
 
     test("Builder with XML attribute escaping test", function () {
         var text = "<b>";
-        var expected = "<presence to='&lt;b&gt;' xmlns='jabber:client'/>";
+        var expected = '<presence to="&lt;b&gt;" xmlns="jabber:client"/>';
         var pres = $pres({to: text});
         equal(pres.toString(), expected, "< should be escaped");
 
         text = "foo&bar";
-        expected = "<presence to='foo&amp;bar' xmlns='jabber:client'/>";
+        expected = '<presence to="foo&amp;bar" xmlns="jabber:client"/>';
         pres = $pres({to: text});
         equal(pres.toString(), expected, "& should be escaped");
     });
@@ -110,7 +110,7 @@ $(document).ready(function () {
     test("c() accepts text and passes it to xmlElement", function () {
         var pres = $pres({from: "darcy@pemberley.lit", to: "books@chat.pemberley.lit"})
             .c("nick", {xmlns: "http://jabber.org/protocol/nick"}, "Darcy");
-        var expected = "<presence from='darcy@pemberley.lit' to='books@chat.pemberley.lit' xmlns='jabber:client'><nick xmlns='http://jabber.org/protocol/nick'>Darcy</nick></presence>";
+        var expected = '<presence from="darcy@pemberley.lit" to="books@chat.pemberley.lit" xmlns="jabber:client"><nick xmlns="http://jabber.org/protocol/nick">Darcy</nick></presence>';
         equal(pres.toString(), expected, "'Darcy' should be a child of <presence>");
     });
 
@@ -125,7 +125,7 @@ $(document).ready(function () {
         equal(Strophe.getText(textNode0), "s &lt; &amp; &gt; p", "should be escaped");
         var text1 = "s's or \"p\"";
         var textNode1 = Strophe.xmlTextNode(text1);
-        equal(Strophe.getText(textNode1), "s&apos;s or &quot;p&quot;", "should be escaped");
+        equal(Strophe.getText(textNode1), "s's or \"p\"", "should be unchanged");
         var text2 = "<![CDATA[<foo>]]>";
         var textNode2 = Strophe.xmlTextNode(text2);
         equal(Strophe.getText(textNode2), "&lt;![CDATA[&lt;foo&gt;]]&gt;", "should be escaped");
@@ -152,15 +152,15 @@ $(document).ready(function () {
         var parser = new DOMParser();
         // Attributes
         var element1 = parser.parseFromString("<foo attr1='abc' attr2='edf'>bar</foo>","text/xml").documentElement;
-        equal(Strophe.serialize(element1), "<foo attr1='abc' attr2='edf'>bar</foo>", "should be serialized");
+        equal(Strophe.serialize(element1), '<foo attr1="abc" attr2="edf">bar</foo>', "should be serialized");
         var element2 = parser.parseFromString("<foo attr1=\"abc\" attr2=\"edf\">bar</foo>","text/xml").documentElement;
-        equal(Strophe.serialize(element2), "<foo attr1='abc' attr2='edf'>bar</foo>", "should be serialized");
+        equal(Strophe.serialize(element2), '<foo attr1="abc" attr2="edf">bar</foo>', "should be serialized");
         // Escaping values
         var element3 = parser.parseFromString("<foo>a &gt; &apos;b&apos; &amp; &quot;b&quot; &lt; c</foo>","text/xml").documentElement;
-        equal(Strophe.serialize(element3), "<foo>a &gt; &apos;b&apos; &amp; &quot;b&quot; &lt; c</foo>", "should be serialized");
+        equal(Strophe.serialize(element3), "<foo>a &gt; 'b' &amp; \"b\" &lt; c</foo>", "should be serialized");
         // Escaping attributes
         var element4 = parser.parseFromString("<foo attr='&lt;a> &apos;b&apos;'>bar</foo>","text/xml").documentElement;
-        equal(Strophe.serialize(element4), "<foo attr='&lt;a&gt; &apos;b&apos;'>bar</foo>", "should be serialized");
+        equal(Strophe.serialize(element4), "<foo attr=\"&lt;a&gt; 'b'\">bar</foo>", "should be serialized");
         var element5 = parser.parseFromString("<foo attr=\"&lt;a> &quot;b&quot;\">bar</foo>","text/xml").documentElement;
         equal(Strophe.serialize(element5), "<foo attr='&lt;a&gt; \"b\"'>bar</foo>", "should be serialized");
         // Empty elements
