@@ -1635,6 +1635,7 @@ Strophe.Connection = function (service)
     this.connected = false;
 
     this.errors = 0;
+    this.synchronous = false;
 
     this.paused = false;
 
@@ -1702,6 +1703,7 @@ Strophe.Connection.prototype = {
         this.connected = false;
 
         this.errors = 0;
+        // keep this.synchronous intact
 
         this._requests = [];
         this._uniqueId = Math.round(Math.random()*10000);
@@ -1798,6 +1800,7 @@ Strophe.Connection.prototype = {
         this.connected = false;
         this.authenticated = false;
         this.errors = 0;
+        this.synchronous = false;
 
         this.wait = wait || this.wait;
         this.hold = hold || this.hold;
@@ -2214,9 +2217,17 @@ Strophe.Connection.prototype = {
      *
      *  Parameters:
      *    (String) reason - The reason the disconnect is occuring.
+     *    (Boolean) synchronously - Disconnect synchronously.
      */
-    disconnect: function (reason)
+    disconnect: function (reason, synchronously)
     {
+        var wassync = this.synchronous;
+
+        if (synchronously) {
+            this.synchronous = true;
+            this.flush();
+        }
+
         this._changeConnectStatus(Strophe.Status.DISCONNECTING, reason);
 
         Strophe.info("Disconnect was called because: " + reason);
@@ -2225,6 +2236,10 @@ Strophe.Connection.prototype = {
             this._disconnectTimeout = this._addSysTimedHandler(
                 3000, this._onDisconnectTimeout.bind(this));
             this._sendTerminate();
+        }
+
+        if (synchronously) {
+            this.synchronous = wassync;
         }
     },
 
@@ -2388,7 +2403,7 @@ Strophe.Connection.prototype = {
                           "." + req.sends + " posting");
 
             try {
-                req.xhr.open("POST", this.service, true);
+                req.xhr.open("POST", this.service, !this.synchronous);
             } catch (e2) {
                 Strophe.error("XHR open failed.");
                 if (!this.connected) {
