@@ -1524,8 +1524,10 @@ Strophe.Request.prototype = {
             if (node.tagName == "parsererror") {
                 Strophe.error("invalid response received");
                 Strophe.error("responseText: " + this.xhr.responseText);
-                Strophe.error("responseXML: " +
-                              Strophe.serialize(this.xhr.responseXML));
+                try {
+                        Strophe.error("responseXML: " +
+                                Strophe.serialize(this.xhr.responseXML));
+                } catch(e) {}
                 throw "parsererror";
             }
         } else if (this.xhr.responseText) {
