@@ -536,6 +536,9 @@ Strophe = {
         text = text.replace(/>/g,  "&gt;");
         text = text.replace(/'/g,  "&apos;");
         text = text.replace(/"/g,  "&quot;");
+        text = text.replace(/\n/g, "&#10;");
+        text = text.replace(/\r/g, "&#13;");
+        text = text.replace(/\t/g, "&#09;");
         return text;
     },
 
@@ -949,11 +952,7 @@ Strophe = {
         for (i = 0; i < elem.attributes.length; i++) {
                if(elem.attributes[i].nodeName != "_realname") {
                  result += " " + elem.attributes[i].nodeName.toLowerCase() +
-                "='" + elem.attributes[i].value
-                    .replace(/&/g, "&amp;")
-                       .replace(/\'/g, "&apos;")
-                       .replace(/>/g, "&gt;")
-                       .replace(/</g, "&lt;") + "'";
+                "='" + Strophe.xmlescape(elem.attributes[i].value) + "'";
                }
         }
 
