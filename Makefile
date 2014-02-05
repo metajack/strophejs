@@ -3,12 +3,18 @@ SHELL=/bin/bash
 SRC_DIR = src
 DOC_DIR = doc
 PLUGIN_DIR = plugins
+MECH_DIR = $(SRC_DIR)/mechanisms
 NDPROJ_DIR = ndproj
 
 BASE_FILES = $(SRC_DIR)/base64.js \
 	$(SRC_DIR)/sha1.js \
 	$(SRC_DIR)/md5.js \
-	$(SRC_DIR)/core.js
+	$(SRC_DIR)/core.js \
+	$(MECH_DIR)/anonymous.js \
+	$(MECH_DIR)/digest_md5.js \
+	$(MECH_DIR)/legacy_auth.js \
+	$(MECH_DIR)/plain.js \
+	$(MECH_DIR)/scram_sha1.js
 
 STROPHE = strophe.js
 STROPHE_MIN = strophe.min.js
