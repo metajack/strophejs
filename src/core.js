@@ -827,7 +827,7 @@ Strophe = {
      */
     getBareJidFromJid: function (jid)
     {
-        return jid ? jid.split("/")[0] : null;
+        return jid ? jid.toString().split("/")[0] : null;
     },
 
     /** Function: log
